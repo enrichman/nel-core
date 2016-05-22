@@ -55,15 +55,18 @@ public class Nel {
                 System.out.println("Estratta sottosequenza: "+sequence);
                 subsequences.add(sequence);
                 dendo.addNode(new SequenceClusterizable(sequence));
-                findMost();
+
+                for(int i=2; i<=10; i++) {
+                    findMost(i, false);
+                }
             }
 
             stream.setData(stream.getData().subList(1, stream.getData().size()));
         }
     }
 
-    public void findMost() {
-        List<Cluster<SequenceClusterizable>> most = dendo.findMostSignificative(6);
+    public List<Cluster<SequenceClusterizable>> findMost(int maxSubTreeSize, boolean print) {
+        List<Cluster<SequenceClusterizable>> most = dendo.findMostSignificative(maxSubTreeSize);
         most.sort(new Comparator<Cluster>() {
             @Override
             public int compare(Cluster o1, Cluster o2) {
@@ -74,27 +77,26 @@ public class Nel {
         if(!most.isEmpty()) {
             Cluster<SequenceClusterizable> top = most.get(0);
             List<SequenceClusterizable> sList = top.getPoints();
+            System.out.println("Cluster height: " +top.getHeight());
 
-            Sequence s1 = sList.get(0).getValue();
-            Sequence s2 = sList.get(1).getValue();
-            Sequence s3 = sList.get(2).getValue();
-            Sequence s4 = sList.get(3).getValue();
-
-
-            for(int i=0; i<s1.getPoints().size(); i++) {
+            if(print) {
                 DecimalFormat df = new DecimalFormat("#.##########");
-                String val1 = df.format(s1.getPoints().get(i).getY());
-                String val2 = df.format(s2.getPoints().get(i).getY());
-                String val3 = df.format(s3.getPoints().get(i).getY());
-                String val4 = df.format(s4.getPoints().get(i).getY());
-                String tot = ("\""+i+"\",\""+val1+"\",\""+val2+"\",\""+val3+"\",\""+val4+"\"");
-                System.out.println(tot.replace(".", ","));
-            }
 
-            System.out.println("\n########\n# Height: " +top.getHeight()+"\n#########\n");
+                StringBuilder sb = new StringBuilder();
+                for(int i=0; i<sList.get(0).getValue().getPoints().size(); i++) {
+                    sb.append('"').append(i).append('"');
+                    for(int j=0; j<maxSubTreeSize; j++) {
+                        Sequence sequence = sList.get(j).getValue();
+                        String val1 = df.format(sequence.getPoints().get(i).getY());
+                        sb.append(',').append('"').append(val1).append('"');
+                    }
+                    sb.append('\n');
+                }
+                System.out.println(sb.toString().replace('.', ','));
+            }
         }
 
-        System.out.println();
+        return most;
     }
 
 }

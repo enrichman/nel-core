@@ -26,7 +26,7 @@ public class SequenceClusterizable extends Clusterizable<Sequence> {
                 Point p1 = points1.get(i);
                 Point p2 = points2.get(i);
 
-                distance += p1.getDistance(p2);
+                distance += Math.sqrt(Math.pow(p1.getY() - p2.getY(), 2));
                 count++;
             }
         }
