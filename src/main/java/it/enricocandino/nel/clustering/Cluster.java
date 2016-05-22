@@ -15,7 +15,19 @@ public class Cluster<T extends Clusterizable> {
     private Cluster<T> cluster1;
     private Cluster<T> cluster2;
 
-    private List<Clusterizable> points = new ArrayList<>();
+    private List<T> points = new ArrayList<>();
+
+    public double getHeight() {
+        return height;
+    }
+
+    public Cluster<T> getCluster1() {
+        return cluster1;
+    }
+
+    public Cluster<T> getCluster2() {
+        return cluster2;
+    }
 
     public void mergeClusters(Cluster<T> c1, Cluster<T> c2) {
         cluster1 = c1;
@@ -27,7 +39,7 @@ public class Cluster<T extends Clusterizable> {
         height = c1.getDistance(c2);
     }
 
-    public List<Clusterizable> getPoints() {
+    public List<T> getPoints() {
         return points;
     }
 

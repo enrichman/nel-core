@@ -12,14 +12,14 @@ import java.util.List;
 public class Tree<T extends Clusterizable> {
 
     private Cluster<T> root;
-    public List<Clusterizable> allPoints = new ArrayList<>();
+    public List<T> allPoints = new ArrayList<>();
 
-    public void addNode(Clusterizable point) {
+    public void addNode(T point) {
 
         allPoints.add(point);
 
         List<Cluster> clusters = new ArrayList<>();
-        for(Clusterizable p : allPoints) {
+        for(T p : allPoints) {
             Cluster<T> c = new Cluster<>();
             c.getPoints().add(p);
             clusters.add(c);
@@ -77,6 +77,28 @@ public class Tree<T extends Clusterizable> {
         closest.add(c2);
 
         return closest;
+    }
+
+    public List<Cluster<T>> findMostSignificative(int maxNumberOfElements) {
+        List<Cluster<T>> mostSignificative = new ArrayList<>();
+
+        if(root.getPoints().size() >= maxNumberOfElements) {
+            return findMostSignificative(root, mostSignificative, maxNumberOfElements);
+        } else {
+            return mostSignificative;
+        }
+    }
+
+    public List<Cluster<T>> findMostSignificative(Cluster<T> cluster, List<Cluster<T>> mostSignificative, int maxNumberOfElements) {
+        if(cluster.getPoints().size() > maxNumberOfElements) {
+            findMostSignificative(cluster.getCluster1(), mostSignificative, maxNumberOfElements);
+            findMostSignificative(cluster.getCluster2(), mostSignificative, maxNumberOfElements);
+
+        } else if(cluster.getPoints().size() == maxNumberOfElements) {
+            mostSignificative.add(cluster);
+        }
+
+        return mostSignificative;
     }
 
 }
