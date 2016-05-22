@@ -1,5 +1,7 @@
 package it.enricocandino.nel.clustering;
 
+import it.enricocandino.nel.clustering.model.Clusterizable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -7,18 +9,18 @@ import java.util.List;
 /**
  * Created by Enrico Candino on 21/05/16.
  */
-public class Tree {
+public class Tree<T extends Clusterizable> {
 
-    private Cluster root;
-    public List<Double> allPoints = new ArrayList<>();
+    private Cluster<T> root;
+    public List<Clusterizable> allPoints = new ArrayList<>();
 
-    public void addNode(Double point) {
+    public void addNode(Clusterizable point) {
 
         allPoints.add(point);
 
         List<Cluster> clusters = new ArrayList<>();
-        for(Double p : allPoints) {
-            Cluster c = new Cluster();
+        for(Clusterizable p : allPoints) {
+            Cluster<T> c = new Cluster<>();
             c.getPoints().add(p);
             clusters.add(c);
         }

@@ -8,19 +8,23 @@ import java.util.List;
  *
  * Distributed under the MIT License.
  */
-public class Stream<T extends Point> {
+public class Stream {
 
-    private List<T> data;
+    private List<Point> data;
 
     public Stream() {
-        this.data = new ArrayList<T>();
+        this.data = new ArrayList<>();
     }
 
-    public List<T> getData() {
+    public List<Point> getData() {
         return data;
     }
 
-    public void setData(List<T> data) {
+    public void setData(List<Point> data) {
         this.data = data;
+    }
+
+    public void clear() {
+        this.data.clear();
     }
 }
