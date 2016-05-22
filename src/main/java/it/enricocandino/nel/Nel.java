@@ -33,7 +33,7 @@ public class Nel {
 
         if(stream.getData().size() >= length) {
             Sequence sequence = new Sequence();
-            sequence.setPoints(stream.getData());
+            sequence.setPoints(new ArrayList<>(stream.getData()));
             subsequences.add(sequence);
             stream.clear();
         }

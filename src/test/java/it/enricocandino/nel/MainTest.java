@@ -1,6 +1,9 @@
 package it.enricocandino.nel;
 
+import it.enricocandino.nel.clustering.Tree;
 import it.enricocandino.nel.model.Point;
+import it.enricocandino.nel.model.Sequence;
+import it.enricocandino.nel.model.SequenceClusterizable;
 import junit.framework.TestCase;
 
 import java.math.BigDecimal;
@@ -14,16 +17,28 @@ public class MainTest extends TestCase {
 
     public void testMe() throws Exception {
 
-        Nel nel = new Nel(10);
+        Nel nel = new Nel(100);
 
-        for(double i=0.; i<100.; i+=0.1) {
+        for(double i=0.; i<10.; i+=0.1) {
             nel.addPoint(new Point(
-                    round(i, 1),
+                    round(i, 2),
                     round(Math.cos(i), 3)
             ));
         }
 
+        for(double i=0.; i<10.; i+=0.1) {
+            nel.addPoint(new Point(
+                    round(i, 2),
+                    round(Math.cos(i), 3)
+            ));
+        }
 
+        Tree dendo = new Tree();
+
+        for(Sequence seq : nel.getSubsequences()) {
+            SequenceClusterizable seqCluster = new SequenceClusterizable(seq);
+            dendo.addNode(seqCluster);
+        }
 
         System.out.println();
     }
