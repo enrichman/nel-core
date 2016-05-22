@@ -14,6 +14,45 @@ public class Tree<T extends Clusterizable> {
     private Cluster<T> root;
     public List<T> allPoints = new ArrayList<>();
 
+    public void addAllNode(List<T> points) {
+
+        allPoints.addAll(points);
+
+        List<Cluster> clusters = new ArrayList<>();
+        for(T p : allPoints) {
+            Cluster<T> c = new Cluster<>();
+            c.getPoints().add(p);
+            clusters.add(c);
+        }
+
+        while(clusters.size() > 1) {
+
+            System.out.println("Clusterizing... remaining: "+clusters.size());
+
+            // get closest clusters
+            List<Cluster> closest = getClosest(clusters);
+            Cluster c1 = closest.get(0);
+            Cluster c2 = closest.get(1);
+
+            // remove from list
+            Iterator<Cluster> it = clusters.iterator();
+            while(it.hasNext()) {
+                Cluster c = it.next();
+                if(c == c1 || c == c2) {
+                    it.remove();
+                }
+            }
+
+            // merge closest
+            Cluster merged = new Cluster();
+            merged.mergeClusters(c1, c2);
+
+            clusters.add(merged);
+        }
+
+        root = clusters.get(0);
+    }
+
     public void addNode(T point) {
 
         allPoints.add(point);

@@ -22,23 +22,28 @@ public class MainTest extends TestCase {
 
     public void testMe() throws Exception {
 
-        Nel nel = new Nel(10);
+        Nel nel = new Nel(20, 1);
 
-        for(double i=0.; i<100.; i+=0.1) {
-            nel.addPoint(new Point(
-                    round(i, 2),
-                    round(Math.cos(i), 3)
-            ));
+        for(double i=0.; i<4; i+=0.1) {
+            for(double x=0.; x<Math.PI; x+=0.1) {
+                nel.addPoint(new Point(
+                        round(x, 2),
+                        round(Math.sin(x), 3)
+                ));
+            }
         }
 
         Tree dendo = new Tree();
 
+        int count = 0;
         for(Sequence seq : nel.getSubsequences()) {
+            System.out.println("Clusterizing "+(++count));
+
             SequenceClusterizable seqCluster = new SequenceClusterizable(seq);
             dendo.addNode(seqCluster);
         }
 
-        List<Cluster<SequenceClusterizable>> most = dendo.findMostSignificative(4);
+        List<Cluster<SequenceClusterizable>> most = dendo.findMostSignificative(10);
         most.sort(new Comparator<Cluster>() {
             @Override
             public int compare(Cluster o1, Cluster o2) {
