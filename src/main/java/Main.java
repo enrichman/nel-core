@@ -1,24 +1,20 @@
-package it.enricocandino.nel;
-
+import it.enricocandino.nel.Nel;
 import it.enricocandino.nel.clustering.Cluster;
-import it.enricocandino.nel.clustering.Tree;
 import it.enricocandino.nel.model.Point;
-import it.enricocandino.nel.model.Sequence;
 import it.enricocandino.nel.model.SequenceClusterizable;
-import junit.framework.TestCase;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by Enrico Candino on 22/05/16.
+ * Created by Enrico Candino on 25/05/16.
  */
-public class CsvTest extends TestCase {
+public class Main {
 
-    public void testCSV() throws Exception {
-
+    public static void main(String[] args) throws Exception {
         Nel nel = new Nel(200, 150);
 
         int count = 0;
@@ -37,7 +33,7 @@ public class CsvTest extends TestCase {
             // map.put(i, nel.findMost(i, true));
         }
 
-        System.out.println();
+        System.out.println("Ended");
     }
 
 }

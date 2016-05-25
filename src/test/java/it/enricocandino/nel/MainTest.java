@@ -22,6 +22,7 @@ public class MainTest extends TestCase {
 
     public void testMe() throws Exception {
 
+        /*
         Nel nel = new Nel(20, 1);
 
         for(double i=0.; i<4; i+=0.1) {
@@ -76,6 +77,7 @@ public class MainTest extends TestCase {
         System.out.println();
 
         System.out.println();
+        */
     }
 
     public static double round(double d, int decimalPlace) {

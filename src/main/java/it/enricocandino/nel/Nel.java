@@ -2,6 +2,7 @@ package it.enricocandino.nel;
 
 import it.enricocandino.nel.clustering.Cluster;
 import it.enricocandino.nel.clustering.Tree;
+import it.enricocandino.nel.learning.LearningModule;
 import it.enricocandino.nel.model.Point;
 import it.enricocandino.nel.model.Sequence;
 import it.enricocandino.nel.model.SequenceClusterizable;
@@ -11,6 +12,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Copyright (c) 2016 Enrico Candino
@@ -21,19 +23,24 @@ public class Nel {
 
     private Stream stream;
     private int length;
-    private Tree dendo = new Tree();
 
-    private List<Sequence> subsequences = new ArrayList<>();
+    private ConcurrentLinkedQueue<Sequence> queue = new ConcurrentLinkedQueue<>();
+
+    private Thread learningModuleThread;
+    private Sequence lastSubsequence;
     private double minDistance;
 
     public Nel(int length, double minDistance) {
         this.minDistance = minDistance;
         this.stream = new Stream();
         this.length = length;
+
+        this.learningModuleThread = new Thread(new LearningModule(queue));
+        this.learningModuleThread.start();
     }
 
-    public List<Sequence> getSubsequences() {
-        return subsequences;
+    public void stop() {
+        learningModuleThread.interrupt();
     }
 
     public void addPoint(Point point) {
@@ -43,60 +50,29 @@ public class Nel {
             Sequence sequence = new Sequence();
             sequence.setPoints(new ArrayList<>(stream.getData()));
 
-            if(subsequences.isEmpty()) {
-                System.out.println("Estratta sottosequenza: "+sequence);
-                subsequences.add(sequence);
-                dendo.addNode(new SequenceClusterizable(sequence));
-            }
+            if(lastSubsequence == null) {
 
-            Sequence last = subsequences.get(subsequences.size()-1);
-            double distance = last.getDistance(sequence);
-            if(distance > minDistance) {
+                // first run, offer the new sequence
                 System.out.println("Estratta sottosequenza: "+sequence);
-                subsequences.add(sequence);
-                dendo.addNode(new SequenceClusterizable(sequence));
+                queue.offer(sequence);
+                lastSubsequence = sequence;
 
-                for(int i=2; i<=10; i++) {
-                    findMost(i, false);
+            } else {
+
+                // not first run, check if the last sequence is different enough
+                double distance = lastSubsequence.getDistance(sequence);
+                if(distance > minDistance) {
+                    System.out.println("Estratta sottosequenza: "+sequence);
+                    queue.offer(sequence);
+
+                    for(int i=2; i<=10; i++) {
+                        // findMost(i, false);
+                    }
                 }
             }
 
             stream.setData(stream.getData().subList(1, stream.getData().size()));
         }
-    }
-
-    public List<Cluster<SequenceClusterizable>> findMost(int maxSubTreeSize, boolean print) {
-        List<Cluster<SequenceClusterizable>> most = dendo.findMostSignificative(maxSubTreeSize);
-        most.sort(new Comparator<Cluster>() {
-            @Override
-            public int compare(Cluster o1, Cluster o2) {
-                return Double.compare(o1.getHeight(), o2.getHeight());
-            }
-        });
-
-        if(!most.isEmpty()) {
-            Cluster<SequenceClusterizable> top = most.get(0);
-            List<SequenceClusterizable> sList = top.getPoints();
-            System.out.println("Cluster height: " +top.getHeight());
-
-            if(print) {
-                DecimalFormat df = new DecimalFormat("#.##########");
-
-                StringBuilder sb = new StringBuilder();
-                for(int i=0; i<sList.get(0).getValue().getPoints().size(); i++) {
-                    sb.append('"').append(i).append('"');
-                    for(int j=0; j<maxSubTreeSize; j++) {
-                        Sequence sequence = sList.get(j).getValue();
-                        String val1 = df.format(sequence.getPoints().get(i).getY());
-                        sb.append(',').append('"').append(val1).append('"');
-                    }
-                    sb.append('\n');
-                }
-                System.out.println(sb.toString().replace('.', ','));
-            }
-        }
-
-        return most;
     }
 
 }
