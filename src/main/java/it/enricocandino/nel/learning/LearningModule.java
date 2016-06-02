@@ -23,21 +23,27 @@ public class LearningModule implements Runnable {
         this.tree = new Tree<>();
     }
 
+    public void calc() {
+        tree.calculateClusters();
+    }
+
     @Override
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
 
-                Sequence sequence = queue.poll();
+                int count = 0;
+                Sequence sequence = queue.peek();
 
-                if(sequence != null) {
-                    // new sequence added
-                    tree.addNode(new SequenceClusterizable(sequence));
+                while (count < 500 && sequence != null) {
+                    sequence = queue.poll();
+                    count++;
 
-                } else {
-                    // empty queue, wait a bit
-                    Thread.sleep(100);
+                    if(sequence != null)
+                        tree.addNode(new SequenceClusterizable(sequence));
                 }
+
+                Thread.sleep(1000);
             }
 
         } catch (Exception e) {

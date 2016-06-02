@@ -26,6 +26,7 @@ public class Nel {
 
     private ConcurrentLinkedQueue<Sequence> queue = new ConcurrentLinkedQueue<>();
 
+    private LearningModule learningModule;
     private Thread learningModuleThread;
     private Sequence lastSubsequence;
     private double minDistance;
@@ -35,12 +36,24 @@ public class Nel {
         this.stream = new Stream();
         this.length = length;
 
-        this.learningModuleThread = new Thread(new LearningModule(queue));
+        this.learningModule = new LearningModule(queue);
+        this.learningModuleThread = new Thread(learningModule);
         this.learningModuleThread.start();
     }
 
     public void stop() {
         learningModuleThread.interrupt();
+    }
+
+    public List<List<Cluster<SequenceClusterizable>>> calc() {
+        List<List<Cluster<SequenceClusterizable>>> l = new ArrayList<>();
+
+        learningModule.calc();
+        for(int i=2; i<=10; i++) {
+            l.add(learningModule.findMost(i, true));
+        }
+
+        return l;
     }
 
     public void addPoint(Point point) {
@@ -71,7 +84,8 @@ public class Nel {
                 }
             }
 
-            stream.setData(stream.getData().subList(1, stream.getData().size()));
+            stream.clear();
+            // stream.setData(stream.getData().subList(1, stream.getData().size()));
         }
     }
 

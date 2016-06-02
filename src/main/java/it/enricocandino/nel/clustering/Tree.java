@@ -15,9 +15,10 @@ public class Tree<T extends Clusterizable> {
     public List<T> allPoints = new ArrayList<>();
 
     public void addNode(T point) {
-
         allPoints.add(point);
+    }
 
+    public void calculateClusters() {
         List<Cluster> clusters = new ArrayList<>();
         for(T p : allPoints) {
             Cluster<T> c = new Cluster<>();
@@ -49,7 +50,8 @@ public class Tree<T extends Clusterizable> {
             clusters.add(merged);
         }
 
-        root = clusters.get(0);
+        if(!clusters.isEmpty())
+            root = clusters.get(0);
     }
 
     private List<Cluster> getClosest(List<Cluster> clusters) {
