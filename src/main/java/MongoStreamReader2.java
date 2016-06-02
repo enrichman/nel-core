@@ -23,8 +23,6 @@ public class MongoStreamReader2 {
         final Nel nel = new Nel(24, 150);
 
         MongoClient client = new MongoClient();
-        MongoCollection<Document> coll = client.getDatabase("archive").getCollection("iHeartAwards");
-        FindIterable<Document> docs = coll.find().sort(new Document("creationDate", 1));
 
         SequencePreprocessor preprocessor = new SequencePreprocessor(new SequencePreprocessor.OnPointProcessedListener() {
 
@@ -33,15 +31,37 @@ public class MongoStreamReader2 {
             @Override
             public void emit(DatePoint dp) {
                 datePoints.add(dp);
-                nel.addPoint(new Point(++count, dp.getY()));
+                nel.addPoint(dp.getSeqId(), new Point(++count, dp.getY()));
             }
         });
 
         int count = 0;
 
+
+        MongoCollection<Document> coll = client.getDatabase("archive").getCollection("iHeartAwards");
+        FindIterable<Document> docs = coll.find().sort(new Document("creationDate", 1));
+
         for(Document doc : docs) {
             Date creationDate = doc.getDate("creationDate");
-            DatePoint dp = new DatePoint(creationDate, 1.);
+            DatePoint dp = new DatePoint("iHeartAwards", creationDate, 1.);
+            preprocessor.addDatePoint(dp);
+        }
+
+        coll = client.getDatabase("archive").getCollection("Harmonizers");
+        docs = coll.find().sort(new Document("creationDate", 1));
+
+        for(Document doc : docs) {
+            Date creationDate = doc.getDate("creationDate");
+            DatePoint dp = new DatePoint("Harmonizers", creationDate, 1.);
+            preprocessor.addDatePoint(dp);
+        }
+
+        coll = client.getDatabase("archive").getCollection("BestFanArmy");
+        docs = coll.find().sort(new Document("creationDate", 1));
+
+        for(Document doc : docs) {
+            Date creationDate = doc.getDate("creationDate");
+            DatePoint dp = new DatePoint("BestFanArmy", creationDate, 1.);
             preprocessor.addDatePoint(dp);
         }
 

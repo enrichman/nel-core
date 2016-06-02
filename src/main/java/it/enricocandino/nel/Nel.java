@@ -9,9 +9,7 @@ import it.enricocandino.nel.model.SequenceClusterizable;
 import it.enricocandino.nel.model.Stream;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -21,19 +19,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Nel {
 
-    private Stream stream;
+    private Map<String, Stream> streamMap = new HashMap<>();
+    private Map<String, Sequence> lastSequenceMap = new HashMap<>();
+
     private int length;
 
     private ConcurrentLinkedQueue<Sequence> queue = new ConcurrentLinkedQueue<>();
 
     private LearningModule learningModule;
     private Thread learningModuleThread;
-    private Sequence lastSubsequence;
     private double minDistance;
 
     public Nel(int length, double minDistance) {
         this.minDistance = minDistance;
-        this.stream = new Stream();
         this.length = length;
 
         this.learningModule = new LearningModule(queue);
@@ -56,19 +54,29 @@ public class Nel {
         return l;
     }
 
-    public void addPoint(Point point) {
+    public void addPoint(String streamId, Point point) {
+        Stream stream = streamMap.get(streamId);
+        if(stream == null) {
+            stream = new Stream();
+            streamMap.put(streamId, stream);
+        }
+
         stream.getData().add(point);
 
         if(stream.getData().size() >= length) {
             Sequence sequence = new Sequence();
+            sequence.setSeqId(streamId);
             sequence.setPoints(new ArrayList<>(stream.getData()));
+
+            Sequence lastSubsequence = lastSequenceMap.get(streamId);
 
             if(lastSubsequence == null) {
 
                 // first run, offer the new sequence
                 System.out.println("Estratta sottosequenza: "+sequence);
                 queue.offer(sequence);
-                lastSubsequence = sequence;
+
+                lastSequenceMap.put(streamId, sequence);
 
             } else {
 
@@ -77,6 +85,8 @@ public class Nel {
                 if(distance > minDistance) {
                     System.out.println("Estratta sottosequenza: "+sequence);
                     queue.offer(sequence);
+
+                    lastSequenceMap.put(streamId, sequence);
 
                     for(int i=2; i<=10; i++) {
                         // findMost(i, false);

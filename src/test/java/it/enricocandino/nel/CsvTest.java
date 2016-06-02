@@ -26,7 +26,7 @@ public class CsvTest extends TestCase {
             String line;
             while ((line = br.readLine()) != null) {
                 if(count > 1) {
-                    nel.addPoint(new Point((double) count, Double.parseDouble(line.split(",")[1])));
+                    nel.addPoint("A", new Point((double) count, Double.parseDouble(line.split(",")[1])));
                 }
                 count++;
             }

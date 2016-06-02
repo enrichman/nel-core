@@ -9,12 +9,22 @@ import java.util.Date;
  */
 public class DatePoint {
 
+    private String seqId;
     private Date x;
     private Double y;
 
-    public DatePoint(Date x, Double y) {
+    public DatePoint(String seqId, Date x, Double y) {
+        this.seqId = seqId;
         this.x = x;
         this.y = y;
+    }
+
+    public String getSeqId() {
+        return seqId;
+    }
+
+    public void setSeqId(String seqId) {
+        this.seqId = seqId;
     }
 
     public Date getX() {

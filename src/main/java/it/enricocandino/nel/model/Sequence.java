@@ -7,7 +7,16 @@ import java.util.List;
  */
 public class Sequence {
 
+    private String seqId;
     private List<Point> points;
+
+    public String getSeqId() {
+        return seqId;
+    }
+
+    public void setSeqId(String seqId) {
+        this.seqId = seqId;
+    }
 
     public List<Point> getPoints() {
         return points;
@@ -38,6 +47,6 @@ public class Sequence {
     public String toString() {
         Point first = points.get(0);
         Point last = points.get(points.size()-1);
-        return "Sequence ["+first.getX()+"]-["+last.getX()+"]";
+        return "Sequence ["+seqId+"] ["+first.getX()+"]-["+last.getX()+"]";
     }
 }
